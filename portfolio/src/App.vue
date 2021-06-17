@@ -3,18 +3,36 @@
   <!-- <router-link to="/hej">hej </router-link> -->
   <app-nav-bar />
   <router-view />
+  {{usestore}} <br>
+  <input v-model="userInput" type="text" name="" id="">
+  <button @click="saveName" type="submit">Submit</button>
 </template>
 
 <script lang="ts">
 import appNavBar from './layout/navBar/appNavBar.vue'
-import { defineComponent } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import {useStore} from 'vuex'
 
 export default defineComponent({
   name: 'App',
   components: {
     appNavBar
+  },
+  setup(){
+    const store = useStore()
+    const usestore = computed(() => store.state.user.name)
+
+    const userInput = ref('')
+
+    function saveName() {
+      store.dispatch('saveName', userInput.value)
+      userInput.value = ''
+    }
+    return { usestore, userInput,saveName}
+    
+
   }
+
 })
 </script>
 
