@@ -1,17 +1,19 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
   <!-- <router-link to="/hej">hej </router-link> -->
+  <app-nav-bar />
   <router-view />
 </template>
 
 <script lang="ts">
-// import hej from './view/hej.vue'
+import appNavBar from './layout/navBar/appNavBar.vue'
 import { defineComponent } from 'vue'
+import {useStore} from 'vuex'
 
 export default defineComponent({
   name: 'App',
   components: {
-    // hej
+    appNavBar
   }
 })
 </script>
