@@ -21,6 +21,7 @@ export default defineComponent({
   setup(){
     const store = useStore()
     const usestore = computed(() => store.state.user.name)
+    // const usestore2 = computed(() => useStore().state.)
 
     const userInput = ref('')
 
@@ -41,8 +42,11 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  font-size: 10px;
+  width: min((100vw - 64px), 100em);
+    margin: auto;
+  /* text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 60px; */
 }
 </style>

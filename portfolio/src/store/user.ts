@@ -1,3 +1,5 @@
+import {User} from './types/user'
+
 export default {
     state: () => ({
         name: 'Buster'
@@ -5,7 +7,7 @@ export default {
     getters: {},
 
     mutations: {
-        SET_NAME(state: { name: any }, payload:any){
+        SET_NAME(state: { name: string }, payload:any){
             state.name = payload
         }
     },
