@@ -3,9 +3,9 @@
   <!-- <router-link to="/hej">hej </router-link> -->
   <app-nav-bar />
   <router-view />
-  {{usestore}} <br>
+  <!-- {{usestore}} <br>
   <input v-model="userInput" type="text" name="" id="">
-  <button @click="saveName" type="submit">Submit</button>
+  <button @click="saveName" type="submit">Submit</button> -->
 </template>
 
 <script lang="ts">
@@ -19,18 +19,17 @@ export default defineComponent({
     appNavBar
   },
   setup(){
-    const store = useStore()
-    const usestore = computed(() => store.state.user.name)
-    // const usestore2 = computed(() => useStore().state.)
+    // const store = useStore()
+    // const usestore = computed(() => store.state.user.name)
+    // // const usestore2 = computed(() => useStore().state.)
 
-    const userInput = ref('')
+    // const userInput = ref('')
 
-    function saveName() {
-      store.dispatch('saveName', userInput.value)
-      userInput.value = ''
-    }
-    return { usestore, userInput,saveName}
-    
+    // function saveName() {
+    //   store.dispatch('saveName', userInput.value)
+    //   userInput.value = ''
+    // }
+    // return { usestore, userInput,saveName}
 
   }
 
