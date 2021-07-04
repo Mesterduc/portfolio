@@ -8,5 +8,11 @@ export default function linkIsActive() {
     isActive.value = i
 }
 
-    return {isActive, setLinkActive};
+
+const isRepoActive = ref()
+  function setRepoActive(i: number) {
+    isRepoActive.value = i
+}
+
+    return {isActive, setLinkActive, isRepoActive, setRepoActive};
   }
