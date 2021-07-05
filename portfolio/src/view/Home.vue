@@ -129,6 +129,7 @@ export default defineComponent({
 }
 .project {
 	color: black;
+    width: 100%;
 	text-decoration: none;
 	display: flex;
 	justify-content: center;
