@@ -3,4 +3,5 @@ export default interface Repository {
     url: string
     languages?: object
     content?: string
+    github: string
   }

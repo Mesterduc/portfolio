@@ -1,39 +1,33 @@
 <template>
-	<h1>This is the Hompepage</h1>
-	<section class="filter">
-		<article
+	
+	<nav class="filter">
+		<span
 			class="filter__item"
 			v-for="(category, index) in categories"
 			:class="{ 'filter__item-isActive': index === isActive }"
 			@click="setLinkActive(index)"
 		>
 			{{ category }}
-		</article>
-	</section>
+		</span>
+	</nav>
 	<section class="project__container">
-		<article
-			class="project"
-			v-for="(repo, index) in repos"
-		>
-				{{ repo.name }}
-			<article 
-			class="project__overlay"
-			:class="{ test: index === isRepoActive }"
-			@mouseenter=" setRepoActive(index)"
-			@mouseleave="setRepoActive(null)"
-			
+		<!-- link and container -->
+		<a :href="repo.github" target="_blank" class="project" v-for="(repo, index) in repos">
+			{{ repo.name }}
+
+			<!-- overlay when over -->
+			<article
+				class="project__overlay"
+				:class="{ 'project__overlay-isActive': index === isRepoActive }"
+				@mouseenter="setRepoActive(index)"
+				@mouseleave="setRepoActive(null)"
 			>
-			<article v-for="(language, i) in repo.languages">
-				<div class="hej">
-					{{ i }} 
-					</div>
+				<article class="project__categories" v-for="(language, i) in repo.languages">
+					{{ i }}
+				</article>
 			</article>
-				
-				
-			</article>
-		</article>
+		</a>
 	</section>
-	<h2>{{ repos[0] }}</h2>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
@@ -60,11 +54,12 @@ export default defineComponent({
 			const respose = await fetch(url)
 			const result = await respose.json()
 			result.forEach((e) => {
-				hej(e.languages_url).then((a) => {
+				hej(e.languages_url).then((data) => {
 					let insert: Repository = {
 						name: e.name,
 						url: e.languages_url,
-						languages: a,
+						languages: data,
+						github: e.html_url,
 					}
 					repos.value.push(insert)
 				})
@@ -78,7 +73,6 @@ export default defineComponent({
 			const url = 'https://api.github.com/repos/Mesterduc/walkSite/contents/walksite/README.md'
 			const respose = await fetch(url)
 			const result = await respose.json()
-			// console.log(result.content)
 
 			content.value = atob(result.content)
 		}
@@ -98,7 +92,6 @@ export default defineComponent({
 			categories,
 			isActive,
 			setLinkActive,
-			// hej,
 			setRepoActive,
 			isRepoActive,
 		}
@@ -110,24 +103,33 @@ export default defineComponent({
 .filter {
 	display: flex;
 	justify-content: center;
+	margin: 2rem 0;
+    padding-bottom: 0.1rem;
 
 	&__item {
+		border-radius: 10px;
 		font-size: 2.2rem;
 		text-transform: uppercase;
 		margin: 0 0.6rem;
 		padding: 0.2rem 0.6rem;
 
 		&:hover {
-			background: gray;
+			// background: gray;
 			cursor: pointer;
+            // text-decoration: underline;
 		}
 
 		&-isActive {
-			background: gray;
+			// background: gray;
+            text-decoration: underline;
+            // border-bottom: 1px solid black;
+            padding-bottom: 2px;
 		}
 	}
 }
 .project {
+	color: black;
+	text-decoration: none;
 	display: flex;
 	justify-content: center;
 	border: solid 1px black;
@@ -158,9 +160,8 @@ export default defineComponent({
 		gap: 1rem;
 	}
 
-	&__overlay{
+	&__overlay {
 		opacity: 0;
-		// display: none;
 		position: absolute;
 		height: 100%;
 		width: 100%;
@@ -169,18 +170,17 @@ export default defineComponent({
 		display: flex;
 		justify-content: center;
 		align-items: center;
+        flex-wrap: wrap;
 		transition: all 0.75s ease-in-out;
-
-
+        &-isActive{
+            opacity: 1;
+        }
 	}
-}
-.test{
-	opacity: 1;
-}
-.hej{
-	border:solid 1px black;
+    &__categories{
+        border: solid 1px black;
 	margin-right: 1rem;
 	padding: 0.5rem;
 	border-radius: 0.5rem;
+    }
 }
 </style>

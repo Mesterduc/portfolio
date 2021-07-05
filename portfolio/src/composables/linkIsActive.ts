@@ -2,7 +2,7 @@ import { ref} from "vue";
 
 export default function linkIsActive() {
 
-  const isActive = ref()
+  const isActive = ref(0)
 
   function setLinkActive(i: number) {
     isActive.value = i
