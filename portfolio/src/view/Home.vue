@@ -2,7 +2,8 @@
 	<nav class="filter">
 		<span
 			class="filter__item"
-			v-for="(category, index) in categories" :key="index"
+			v-for="(category, index) in categories"
+			:key="index"
 			:class="{ 'filter__item-isActive': index === isActive }"
 			@click="setLinkActive(index), changeFilterValue(category)"
 		>
@@ -12,8 +13,10 @@
 	<section class="project__container">
 		<!-- link and container -->
 		<transition-group name="fade">
-			<a :href="repo.github" target="_blank" class="project" v-for="(repo, index) in filterRepo" :key="index" >
-				{{ repo.name }}
+			<a :href="repo.github" target="_blank" class="project" v-for="(repo, index) in filterRepo" :key="index">
+				<img :src="content"  class="project__img"/>
+                <p class="project__name">	{{ repo.name }} </p>
+			
 
 				<!-- overlay when hover -->
 				<article
@@ -59,7 +62,6 @@ export default defineComponent({
 				return repos.value
 			}
 			return repos.value.filter((arr) => arr.languages.hasOwnProperty(filter.value))
-            
 		})
 
 		// get Data
@@ -83,15 +85,21 @@ export default defineComponent({
 
 		// get readme file
 		const fetchReadme = async () => {
-			const url = 'https://api.github.com/repos/Mesterduc/walkSite/contents/walksite/README.md'
+			// const url = 'https://api.github.com/repos/Mesterduc/walkSite/contents/walksite/README.md'
+			const url = 'https://api.github.com/repos/Mesterduc/bluebook/contents/README.md'
 			const respose = await fetch(url)
 			const result = await respose.json()
-
-			content.value = atob(result.content)
+			// console.log(atob(result.content))
+			// content.value = atob(result.content)
+			// console.log(content.value)
+			let str = atob(result.content)
+			var mySubString = str.substring(str.lastIndexOf('(') + 1, str.lastIndexOf(')'))
+			// console.log(mySubString)
+			content.value = mySubString
 		}
 		fetchReadme()
 
-        // get used languages that is used in the project
+		// get used languages that is used in the project
 		async function getProjectLanguage(url: string) {
 			const respose = await fetch(url)
 			const result = await respose.json()
@@ -149,9 +157,9 @@ export default defineComponent({
 	justify-content: center;
 	border: solid 1px black;
 	position: relative;
-    -webkit-transition: all 0.6s ease;
+	-webkit-transition: all 0.6s ease;
 	transition: all 0.6s ease;
-    animation: fade-in 1s;
+	animation: fade-in 1s;
 
 	&:hover::before {
 		background: white;
@@ -177,6 +185,16 @@ export default defineComponent({
 		grid-auto-rows: 100px;
 		gap: 1rem;
 	}
+    &__name {
+        z-index: 1;
+    }
+    &__img {
+        position: absolute;
+        left: 0;
+        top:0;
+        width: 100%;
+        height: 100%;
+    }
 
 	&__overlay {
 		opacity: 0;
@@ -205,21 +223,20 @@ export default defineComponent({
 .fade-leave-active {
 	-webkit-transition: all 0.6s ease;
 	transition: all 0.6s ease;
-    animation: fade-in 1s reverse;
+	animation: fade-in 1s reverse;
 }
 .fade-enter-active {
 	-webkit-transition: all 0.6s ease;
 	transition: all 0.6s ease;
-    animation: fade-in 1s;
-    
+	animation: fade-in 1s;
 }
 
 .fade-enter-from {
-    transform: scale(0.5) translatey(-80px);
+	transform: scale(0.5) translatey(-80px);
 	opacity: 0;
 }
 .fade-leave-to {
-    transform: translatey(30px);
+	transform: translatey(30px);
 	opacity: 0;
 }
 
