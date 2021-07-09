@@ -1,36 +1,37 @@
 <template>
-	
 	<nav class="filter">
 		<span
 			class="filter__item"
-			v-for="(category, index) in categories"
+			v-for="(category, index) in categories" :key="index"
 			:class="{ 'filter__item-isActive': index === isActive }"
-			@click="setLinkActive(index)"
+			@click="setLinkActive(index), changeFilterValue(category)"
 		>
 			{{ category }}
 		</span>
 	</nav>
 	<section class="project__container">
 		<!-- link and container -->
-		<a :href="repo.github" target="_blank" class="project" v-for="(repo, index) in repos">
-			{{ repo.name }}
+		<transition-group name="fade">
+			<a :href="repo.github" target="_blank" class="project" v-for="(repo, index) in filterRepo" :key="index" >
+				{{ repo.name }}
 
-			<!-- overlay when over -->
-			<article
-				class="project__overlay"
-				:class="{ 'project__overlay-isActive': index === isRepoActive }"
-				@mouseenter="setRepoActive(index)"
-				@mouseleave="setRepoActive(null)"
-			>
-				<article class="project__categories" v-for="(language, i) in repo.languages">
-					{{ i }}
+				<!-- overlay when hover -->
+				<article
+					class="project__overlay"
+					:class="{ 'project__overlay-isActive': index === isRepoActive }"
+					@mouseenter="setRepoActive(index)"
+					@mouseleave="setRepoActive(null)"
+				>
+					<article class="project__categories" v-for="(language, i) in repo.languages" :key="i">
+						{{ i }}
+					</article>
 				</article>
-			</article>
-		</a>
+			</a>
+		</transition-group>
 	</section>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 import linkIsActive from '../composables/linkIsActive'
 import Repository from '../types/repository'
 
@@ -41,12 +42,25 @@ export default defineComponent({
 		let { isActive, setLinkActive, setRepoActive, isRepoActive } = linkIsActive()
 
 		// array of language categories
-		const categories = ref(['all', 'vue', 'react', 'javascript', 'swift'])
-
+		const categories = ref(['all', 'Vue', 'React', 'JavaScript', 'Swift', 'C#'])
 		const repos = ref([])
-		const language_url = ref([])
-		const languages = ref([])
 		const content = ref('')
+
+		const filter = ref('')
+
+		// change the filter value
+		function changeFilterValue(s: string) {
+			filter.value = s
+		}
+
+		// filter repos
+		const filterRepo = computed(() => {
+			if (filter.value == '' || filter.value == 'all') {
+				return repos.value
+			}
+			return repos.value.filter((arr) => arr.languages.hasOwnProperty(filter.value))
+            
+		})
 
 		// get Data
 		const getData = async () => {
@@ -54,18 +68,17 @@ export default defineComponent({
 			const respose = await fetch(url)
 			const result = await respose.json()
 			result.forEach((e) => {
-				hej(e.languages_url).then((data) => {
-					let insert: Repository = {
+				getProjectLanguage(e.languages_url).then((data) => {
+					let repo: Repository = {
 						name: e.name,
 						url: e.languages_url,
 						languages: data,
 						github: e.html_url,
 					}
-					repos.value.push(insert)
+					repos.value.push(repo)
 				})
 			})
 		}
-
 		onMounted(getData)
 
 		// get readme file
@@ -78,17 +91,18 @@ export default defineComponent({
 		}
 		fetchReadme()
 
-		async function hej(url: string) {
+        // get used languages that is used in the project
+		async function getProjectLanguage(url: string) {
 			const respose = await fetch(url)
 			const result = await respose.json()
 			return result
 		}
 
 		return {
+			changeFilterValue,
+			filterRepo,
 			repos,
-			languages,
 			content,
-			language_url,
 			categories,
 			isActive,
 			setLinkActive,
@@ -104,7 +118,7 @@ export default defineComponent({
 	display: flex;
 	justify-content: center;
 	margin: 2rem 0;
-    padding-bottom: 0.1rem;
+	padding-bottom: 0.1rem;
 
 	&__item {
 		border-radius: 10px;
@@ -116,25 +130,28 @@ export default defineComponent({
 		&:hover {
 			// background: gray;
 			cursor: pointer;
-            // text-decoration: underline;
+			// text-decoration: underline;
 		}
 
 		&-isActive {
 			// background: gray;
-            text-decoration: underline;
-            // border-bottom: 1px solid black;
-            padding-bottom: 2px;
+			text-decoration: underline;
+			// border-bottom: 1px solid black;
+			padding-bottom: 2px;
 		}
 	}
 }
 .project {
 	color: black;
-    width: 100%;
+	width: 100%;
 	text-decoration: none;
 	display: flex;
 	justify-content: center;
 	border: solid 1px black;
 	position: relative;
+    -webkit-transition: all 0.6s ease;
+	transition: all 0.6s ease;
+    animation: fade-in 1s;
 
 	&:hover::before {
 		background: white;
@@ -146,7 +163,7 @@ export default defineComponent({
 		filter: brightness(60%);
 		opacity: 0.7;
 		position: absolute;
-		transition: all 0.5s ease-in-out;
+		// transition: all 0.5s ease-in-out;
 		height: 0;
 		top: 0;
 		left: 0;
@@ -171,17 +188,57 @@ export default defineComponent({
 		display: flex;
 		justify-content: center;
 		align-items: center;
-        flex-wrap: wrap;
+		flex-wrap: wrap;
 		transition: all 0.75s ease-in-out;
-        &-isActive{
-            opacity: 1;
-        }
+		&-isActive {
+			opacity: 1;
+		}
 	}
-    &__categories{
-        border: solid 1px black;
-	margin-right: 1rem;
-	padding: 0.5rem;
-	border-radius: 0.5rem;
-    }
+	&__categories {
+		border: solid 1px black;
+		margin-right: 1rem;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
+	}
 }
+
+.fade-leave-active {
+	-webkit-transition: all 0.6s ease;
+	transition: all 0.6s ease;
+    animation: fade-in 1s reverse;
+}
+.fade-enter-active {
+	-webkit-transition: all 0.6s ease;
+	transition: all 0.6s ease;
+    animation: fade-in 1s;
+    
+}
+
+.fade-enter-from {
+    transform: scale(0.5) translatey(-80px);
+	opacity: 0;
+}
+.fade-leave-to {
+    transform: translatey(30px);
+	opacity: 0;
+}
+
+.fade-move {
+	-webkit-transition: -webkit-transform 0.6s;
+	transition: -webkit-transform 0.6s;
+	transition: transform 0.6s;
+	transition: transform 0.6s, -webkit-transform 0.6s;
+}
+
+// @keyframes fade-in {
+//   from {
+//     opacity: 0;
+//     width: 0;
+//     background-color: blue;
+//   }
+//   to {
+//     opacity: 1;
+//     width: 100%;
+//   }
+// }
 </style>
