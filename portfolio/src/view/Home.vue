@@ -136,7 +136,7 @@ export default defineComponent({
 		padding: 0.2rem 0.6rem;
 
 		&:hover {
-			// background: gray;
+			background: gray;
 			cursor: pointer;
 			// text-decoration: underline;
 		}
@@ -176,6 +176,7 @@ export default defineComponent({
 		top: 0;
 		left: 0;
 		width: 100%;
+		z-index: 1;
 	}
 
 	&__container {
@@ -187,6 +188,8 @@ export default defineComponent({
 	}
     &__name {
         z-index: 1;
+		font-size: 2rem;
+		font-weight: 600;
     }
     &__img {
         position: absolute;
@@ -208,6 +211,7 @@ export default defineComponent({
 		align-items: center;
 		flex-wrap: wrap;
 		transition: all 0.75s ease-in-out;
+		z-index: 2;
 		&-isActive {
 			opacity: 1;
 		}
@@ -217,6 +221,8 @@ export default defineComponent({
 		margin-right: 1rem;
 		padding: 0.5rem;
 		border-radius: 0.5rem;
+		margin-top: 2.5rem;
+		
 	}
 }
 
